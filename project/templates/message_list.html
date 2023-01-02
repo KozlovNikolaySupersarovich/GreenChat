@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% extends 'base.html' %}
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+
+{% for message in objects %}
+
+<div style="margin:15px; background-color:lightgreen; border:3px solid limegreen; padding-left:10px">
+    <h3>{{ message.author }} | {{ message.sent_time }}</h3>
+    {% autoescape off %}
+    <p style="padding-left:3rem">{{ message.text|linebreaksbr }}</p>
+    {% endautoescape %}
+</div>
+
+{% endfor %}
+
+{% endblock %}
+</body>
+</html>
