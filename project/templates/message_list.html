@@ -8,16 +8,34 @@
 <body>
 {% block content %}
 
-{% for message in objects %}
+<div  style="overflow-y: scroll; padding-top:20px; max-height:24.5rem">
+    {% for message in objects %}
 
-<div style="margin:15px; background-color:lightgreen; border:3px solid limegreen; padding-left:10px">
-    <h3>{{ message.author }} | {{ message.sent_time }}</h3>
-    {% autoescape off %}
-    <p style="padding-left:3rem">{{ message.text|linebreaksbr }}</p>
-    {% endautoescape %}
+    <div style="margin:15px; background-color:lightgreen; border:3px solid limegreen; padding-left:10px">
+        <h3>{{ message.author }} | {{ message.sent_time }}</h3>
+        {% autoescape off %}
+        <p style="padding-left:3rem">{{ message.text|linebreaksbr }}</p>
+        {% endautoescape %}
+    </div>
+
+    {% endfor %}
 </div>
 
-{% endfor %}
+<div class="content-fixed" style="text-align:center; background-color:green; padding-bottom:20px; padding-top:20px">
+    {% if user.is_authenticated %}
+    <div>
+        <form action="{% url 'message_list' %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_table }}
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+    {% else %}
+    <div>
+        <h2>Вам необходимо зарегистрироваться, чтобы отправлять сообщения!</h2>
+    </div>
+    {% endif %}
+</div>
 
 {% endblock %}
 </body>

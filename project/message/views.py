@@ -3,6 +3,7 @@ from .models import *
 from .forms import *
 from django.http import QueryDict
 from django.http import HttpResponseRedirect
+from django.views.generic.base import TemplateView
 
 
 def message_list_view(request):
@@ -20,3 +21,7 @@ def message_list_view(request):
 
     objects = Message.objects.all().order_by('-sent_time')
     return render(request, 'message_list.html', context={'objects': objects, 'user': request.user, 'form': form})
+
+
+class IndexView(TemplateView):
+    template_name = 'index.html'

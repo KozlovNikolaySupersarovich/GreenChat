@@ -3,5 +3,6 @@ from .views import *
 
 
 urlpatterns = [
-    path('', message_list_view, name='message_list'),
+    path('', IndexView.as_view(), name='index'),
+    path('messages/', message_list_view, name='message_list')
 ]
