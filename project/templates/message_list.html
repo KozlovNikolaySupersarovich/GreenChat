@@ -2,39 +2,100 @@
 <html lang="en">
 <head>
     {% extends 'base.html' %}
+    {% load static %}
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 {% block content %}
 
-<div  style="overflow-y: scroll; padding-top:20px; max-height:24.5rem">
+
+
+<div style="padding-top:20px; margin-bottom:150px; height:100%" id="messages-container">
     {% for message in objects %}
 
-    <div style="margin:15px; background-color:lightgreen; border:3px solid limegreen; padding-left:10px">
+    <div class="message">
         <h3>{{ message.author }} | {{ message.sent_time }}</h3>
         {% autoescape off %}
-        <p style="padding-left:3rem">{{ message.text|linebreaksbr }}</p>
+        <p>{{ message.text|linebreaksbr }}</p>
         {% endautoescape %}
     </div>
 
     {% endfor %}
 </div>
 
-<div class="content-fixed" style="text-align:center; background-color:green; padding-bottom:20px; padding-top:20px">
-    {% if user.is_authenticated %}
-    <div>
-        <form action="{% url 'message_list' %}" method="POST">
-            {% csrf_token %}
-            {{ form.as_table }}
-            <button type="submit">Отправить</button>
-        </form>
+<div class="content-fixed" style="z-index:10;">
+    <img src="{% static 'leaves-1.png' %}" style="z-index:5; width:100%; left:0; bottom:0">
+    <div style="text-align:center; position: relative; top:-112px; z-index:10">
+        {% if user.is_authenticated %}
+        <div style="z-index:10; width:100%; text-align:center; padding-bottom:20px; padding-top:15px;">
+            <form action="{% url 'message_list' %}" method="POST">
+                {% csrf_token %}
+                {{ form.as_table }}
+                <button type="button" id="sender">Отправить</button>
+            </form>
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script>
+                $("#sender").click(function () {
+                    var input = $('#user-input').val();
+
+                    $.ajax({
+                        url: '{% url 'message_send' %}',
+                        data: {
+                          'text': input
+                        },
+                        dataType: 'json',
+                    });
+                    $('#user-input').val('');
+                });
+            </script>
+            <script>
+                $(document).ready( function () {
+                    function timer() {
+                        setTimeout(function(){
+                            $.ajax({
+                                url: '{% url 'message_get' %}',
+                                success: function(data) {
+                                    if(data['messages_to_get'].length > 0) {
+                                        for (i = 0; i < data['messages_to_get'].length; i++){
+                                            showMessage(data['messages_to_get'][i]);
+                                        }
+                                    }
+                                }
+                            });
+                            timer();
+                        }, 10000);
+                    }
+
+                    function showMessage(message) {
+                        let div = document.createElement('div');
+                        div.className = 'message'
+
+                        let messageHeader = document.createElement('h3');
+                        messageHeader.textContent = message['author'] + ' | ' + message['sent_time'];
+                        div.append(messageHeader);
+
+                        let messageBody = document.createElement('p');
+                        messageBody.textContent = message['text'];
+                        div.append(messageBody);
+
+                        let messagesContainer = document.querySelector('#messages-container');
+                        messagesContainer.prepend(div);
+                    }
+
+                    timer();
+                });
+
+
+            </script>
+        </div>
+        {% else %}
+        <div>
+            <h2>Вам необходимо зарегистрироваться, чтобы отправлять сообщения!</h2>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div>
-        <h2>Вам необходимо зарегистрироваться, чтобы отправлять сообщения!</h2>
-    </div>
-    {% endif %}
 </div>
 
 {% endblock %}

@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>Зелёный чат</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
     <style>
         .white-text, .white-text a {
             color: white;
@@ -12,35 +15,74 @@
         .content-fixed {
             position: fixed;
             left: 0;
-            bottom: 0;
+            bottom: -112px;
             width: 100%;
+        }
+
+        .message {
+            margin:15px;
+            background-color:lightgreen;
+            border:3px solid limegreen;
+            padding-left:10px
+        }
+
+        .message p {
+            padding-left:3rem
         }
     </style>
 </head>
-<body style="background-color:aquamarine; margin:0px">
+<body style="background-color:springgreen; margin:0px">
 
-<header style="text-align:center; background-color:green; padding-bottom:20px; padding-top:20px; width:100%">
-    <h1 style="color:white">Зелёный чат</h1>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
 
-<div class="white-text">
-	{% if user.is_authenticated %}
-    <p>Здравствуйте, {{ user.username }}</p>
-	<p><a href="{% url 'logout' %}">Выйти</a></p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
-	{% else %}
-	<a href="{% url 'login' %}">Войти</a> |
-	<a href="{% url 'signup' %}">Зарегистрироваться</a>
-
-	{% endif %}
-	</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
-</header>
 
+<nav style="width:100%; position:relative; background-color:green" class="navbar navbar-expand-md navbar-dark mb-4">
+    <a class="navbar-brand" href="{% url 'index' %}">Зелёный чат</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="{% static 'tree-logo.png' %}" style="width:50px; height:50px; z-index:11; position:absolute; right:0px; top:0px; margin:3px">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+
+                    {% if user.is_authenticated %}
+                    <p class="dropdown-item">{{ user.username }}</p>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'message_list' %}">Сообщения</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
+
+                    {% else %}
+                    <a class="dropdown-item" href="{% url 'login' %}">Войти</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'signup' %}">Зарегистрироваться</a>
+
+                    {% endif %}
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div style="position:relative; margin-bottom:150px">
     {% block content %}
     {% endblock %}
-
-
+</div>
 
 
 </body>

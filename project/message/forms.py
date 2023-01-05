@@ -4,7 +4,8 @@ from .models import *
 
 class MessageForm(forms.Form):
     text = forms.CharField(label='',
-                           widget=forms.Textarea(attrs={'maxlength': '255',
+                           widget=forms.Textarea(attrs={'maxlength': '500',
+                                                        'id': 'user-input',
                                                         'style': 'width:535px;'
                                                                  'height:70px; resize:none'}))
 
