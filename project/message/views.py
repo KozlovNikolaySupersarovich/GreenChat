@@ -8,9 +8,6 @@ from django.views.generic.base import TemplateView
 
 def message_list_view(request):
     print(request)
-
-
-
     form = MessageForm()
 
     objects = Message.objects.all().order_by('-sent_time')
@@ -44,6 +41,7 @@ def message_get(request):
             'author': m.author.username,
             'text': m.text,
             'sent_time': m.sent_time,
+            'author_status': m.author.status,
         }
         messages_to_get.append(temp_message)
 
@@ -57,3 +55,7 @@ def message_get(request):
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+
+def answer_search(text):
+    pass

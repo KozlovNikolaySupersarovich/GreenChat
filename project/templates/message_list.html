@@ -11,14 +11,27 @@
 
 
 
-<div style="padding-top:20px; margin-bottom:150px; height:100%" id="messages-container">
+<div style="padding-top:20px; margin-bottom:150px; height:100%" id="messages_container">
     {% for message in objects %}
 
-    <div class="message">
-        <h3>{{ message.author }} | {{ message.sent_time }}</h3>
-        {% autoescape off %}
-        <p>{{ message.text|linebreaksbr }}</p>
-        {% endautoescape %}
+    <div class="message_box">
+        <div style="clear: both">
+            <div style="float: left">
+                <h3 class="message_author" style="display:inline">{{ message.author }}</h3>
+                <h3 style="display:inline"> | {{ message.sent_time }}</h3>
+            </div>
+            <h6 style="float:right">{{ user.status }}</h6>
+        </div>
+        <br>
+        <div style="clear: left">
+            {% autoescape off %}
+            {% if user.username in message.text %}
+            <p class="message_content" style="background-color:orange">{{ message.text|linebreaksbr }}</p>
+            {% else %}
+            <p class="message_content">{{ message.text|linebreaksbr }}</p>
+            {% endif %}
+            {% endautoescape %}
+        </div>
     </div>
 
     {% endfor %}
@@ -69,25 +82,69 @@
                     }
 
                     function showMessage(message) {
-                        let div = document.createElement('div');
-                        div.className = 'message'
+                        let messageBox = document.createElement('div');
+                        messageBox.className = 'message_box'
 
-                        let messageHeader = document.createElement('h3');
-                        messageHeader.textContent = message['author'] + ' | ' + message['sent_time'];
-                        div.append(messageHeader);
 
-                        let messageBody = document.createElement('p');
-                        messageBody.textContent = message['text'];
-                        div.append(messageBody);
+                        let messageHeader = document.createElement('div');
+                        messageHeader.style = 'clear:both';
+                        messageHeader.setAttribute('name', 'messageHeader');
+                        messageBox.appendChild(messageHeader);
 
-                        let messagesContainer = document.querySelector('#messages-container');
-                        messagesContainer.prepend(div);
+
+                        let messageInfo = document.createElement('div');
+                        messageInfo.style = 'float:left';
+                        messageHeader.appendChild(messageInfo);
+
+
+                        let messageAuthor = document.createElement('h3');
+                        messageAuthor.textContent = message['author'];
+                        messageAuthor.className = 'message_author';
+                        messageAuthor.style = 'display:inline';
+                        messageInfo.appendChild(messageAuthor);
+
+                        let messageDate = document.createElement('h3');
+                        messageDate.textContent = ' | ' + message['sent_time'];
+                        messageDate.style = 'display:inline';
+                        messageInfo.appendChild(messageDate);
+
+
+                        let messageStatus = document.createElement('h6');
+                        messageStatus.textContent = message['author_status'];
+                        messageStatus.style = 'float:right';
+                        messageHeader.appendChild(messageStatus);
+
+
+                        br = document.createElement('br')
+                        messageBox.appendChild(br);
+
+
+                        let messageBody = document.createElement('div');
+                        messageBody.style = 'clear:left';
+                        messageBody.setAttribute('name', 'messageBody');
+                        messageBox.appendChild(messageBody);
+
+                        let messageText = document.createElement('p');
+                        messageText.textContent = message['text'];
+                        user = '{{ user.username }}';
+                        if (message['text'].indexOf(user) >= 0){ messageText.style = 'background-color:orange'; }
+                        messageText.className = 'message_content';
+                        messageBody.appendChild(messageText);
+
+
+
+                        let messagesContainer = document.querySelector('#messages_container');
+                        messagesContainer.prepend(messageBox);
                     }
-
                     timer();
                 });
 
 
+            </script>
+            <script>
+                $(".message_author").click(function (event) {
+                    document.getElementById("user-input").value += event.target.innerText + ', ';
+                });
             </script>
         </div>
         {% else %}
